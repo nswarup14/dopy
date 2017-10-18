@@ -1,0 +1,65 @@
+Config File:
+
+-----Properties Widget-----
+Properties Widget Height:
+440
+Properties Widget Num Fields:
+500
+
+-----Display Widget-----
+Display Widget Viewer Height:
+580
+Display Widget Viewer Width:
+715
+Display Widget Background Texture:
+fresh\\resources\\Textures\\texture1.jpg
+
+-----Home Widget-----
+Home Widget Bill Button StyleSheet:
+background-image:url(resources/Icons/bill.png);background-repeat:no-repeat;background-position:center;font-size:14pt;padding-top:200px;
+Home Widget Emailer Button StyleSheet:
+background-image:url(resources/Icons/email.png);background-repeat:no-repeat;background-position:center;font-size:14pt;padding-top:200px;
+Home Widget Review Billed Button StyleSheet:
+background-image:url(resources/Icons/review.png);background-repeat:no-repeat;background-position:center;font-size:14pt;padding-top:200px;
+Home Widget Merch Button StyleSheet:
+background-image:url(resources/Icons/merch.png);background-repeat:no-repeat;background-position:center;font-size:14pt;padding-top:200px;
+Home Widget Fest Name:
+BOSM 2013
+Home Widget Fest Label Font:
+font: bold;font-size:20pt;
+
+-----Misc-----
+Left Widget Snap Viewer Dimension:
+150
+Search Widget Height:
+210
+Unbilling Table Height:
+500
+
+-----StyleSheets-----
+
+Application SyleSheet:
+"""
+QWidget{background-color:#000400;color:#62BECB;}
+QMenuBar::item{padding:3px;}
+QMenuBar::item:selected{background-color:#62BECB;color:white;border-radius:2px;padding:3px;}
+QMenu::item{padding:3px;}
+QMenu::item:selected{background-color:#62BECB;color:white;border-radius:2px;padding:3px;}
+QFileDialog{background-color:#000400;color:#62BECB;}
+"""
+
+Other Widgets Style Sheet:
+"""
+QPushButton{border-radius:3px;border-width:1px;border-color:#0E4E5A;border-style:outset;padding:5px}
+QPushButton:hover{background-color:#62BECB;color:white;border-radius:3px;border-color:#0E4E5A;border-width:1px;border-style:outset;}
+QPushButton:pressed{background-color:#0E4E5A;color:white;}
+QLineEdit{background-color:#3F4038;color:white;border-radius:3px;padding:2px}
+QSpinBox{background-color:#3F4038;color:white;border-radius:2px;padding:2px}
+QComboBox{background-color:#3F4038;color:white;border-radius:2px;padding:2px}
+"""
+
+Home Widget SyleSheet:
+"""
+QPushButton:hover{background-color:#62BECB;color:white;}
+QPushButton:pressed{background-color:#0E4E5A;color:white;}
+"""
