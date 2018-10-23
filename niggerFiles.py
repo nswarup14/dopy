@@ -35,8 +35,10 @@ class Students:
         idList = []
         dataList = []
         for rec in list:
-            print(rec)
-            char = rec[1][4]
+            try:
+                char = rec[1][4]
+            except:
+                continue
             sh = lambda record: str(record[1][2:4] + record[1][-4:])
             if "A" <= char <= "D":
                 shorthand = sh(rec)

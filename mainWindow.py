@@ -1,7 +1,7 @@
 from PyQt4 import QtGui, QtCore
 from operator import itemgetter
 import sys, os, random, time, webbrowser
-import bill, unbill, homeWidget, chorePlay, email_ui, config, sendtoprinter, niggerFiles
+import bill, unbill, merch, homeWidget, chorePlay, email_ui, config, sendtoprinter, niggerFiles
 sys.path.insert(1, '/usr/local/lib/python3.6/site-packages/PyQt5')
 
 class mainWindow(QtGui.QMainWindow):
@@ -160,7 +160,18 @@ class mainWindow(QtGui.QMainWindow):
             self.widget.loadNewFolder()
 
         elif widget == "merch":
-            return None
+            if self.widget != None: self.widget.close()
+            self.widget = merch.merchWidget(self)
+            self.widget.setStyleSheet(self.configurator.otherWidgetsStyleSheet)
+            self.setCentralWidget(self.widget)
+
+            ###enable/disable menuitems
+            self.menuItems["loaddatabase"][3].setDisabled(True)
+            self.menuItems["home"][3].setEnabled(True)
+            self.menuItems["billing"][3].setEnabled(True)
+            self.menuItems["reviewbilled"][3].setEnabled(True)
+            self.menuItems["emailer"][3].setEnabled(True)
+            self.menuItems["merch"][3].setDisabled(True)
 
     def billGenerator(self):
         path = QtGui.QFileDialog.getExistingDirectory(self, "Locate the Billed Snaps Folder")
