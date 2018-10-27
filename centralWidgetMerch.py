@@ -8,7 +8,7 @@ class itemComboBox(QtGui.QComboBox):
         QtGui.QComboBox.__init__(self)
         self.parent = parent
         self.model = QtGui.QStringListModel()
-        self.itemList = ["Rocktaves-Black-530", "OasisT-Grey-280", "SUSweat-Grey-530"]
+        self.itemList = self.parent.parent.parent.configurator.merchItemList
 
         self.model.setStringList(self.itemList)
         self.addItems(self.itemList)
@@ -100,6 +100,8 @@ class centralWidget(QtGui.QWidget):
         self.idFieldLabel.setWordWrap(True)
         self.idField = QtGui.QLineEdit("")
 
+        self.isOutstiField = QtGui.QCheckBox("Outsti (Hover over text to view the checkbox)")
+
         self.itemLabel1 = QtGui.QLabel(r'Item')
         self.itemField1 = itemComboBox(self)
         self.sizeField1 = sizeComboBox(self)
@@ -129,6 +131,9 @@ class centralWidget(QtGui.QWidget):
         hboxId = QtGui.QHBoxLayout()
         hboxId.addWidget(self.idFieldLabel)
         hboxId.addWidget(self.idField)
+
+        hboxOutsti = QtGui.QHBoxLayout()
+        hboxOutsti.addWidget(self.isOutstiField)
 
         hbox1 = QtGui.QHBoxLayout()
         hbox1.addWidget(self.itemLabel1)
@@ -162,6 +167,7 @@ class centralWidget(QtGui.QWidget):
         widgetLayout = QtGui.QVBoxLayout()
         widgetLayout.addLayout(hboxSync)
         widgetLayout.addLayout(hboxId)
+        widgetLayout.addLayout(hboxOutsti)
 
         widgetLayout.addLayout(hbox1)
         widgetLayout.addLayout(hbox2)
@@ -175,6 +181,7 @@ class centralWidget(QtGui.QWidget):
 
     def refresh(self):
         self.idField.setText("")
+        self.isOutstiField.setChecked(False)
         self.itemField1.setEditText("")
         self.sizeField1.setEditText("")
         self.itemField2.setEditText("")

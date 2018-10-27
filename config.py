@@ -183,6 +183,24 @@ QComboBox{background-color:#3F4038;color:white;border-radius:2px;padding:2px}
             print("Error configuring unbillingTableHeight: ",str(e))
             self.unbillingTableHeight = 500
 
+        # Merch item list
+        try:
+            index = self.lines.index("Item List:\n")
+            stringList = self.lines[index+1]
+            self.merchItemList = stringList.split(',')
+
+        except Exception as e:
+            print("Error configuring item list: ". str(e))
+            self.merchItemList = ["Rocktaves-Black-530", "OasisT-Grey-280", "SUSweat-Grey-530"]
+
+        try:
+            index = self.lines.index("Spreadsheet ID:\n")
+            self.spreadSheetId = self.lines[index+1]
+
+        except Exception as e:
+            print("Error configuring spreadsheet ID: ", str(e))
+            self.spreadSheetId = "1GLSibEIp9w82ZwGsuRZoPCBiLWdfQjgS-_GfLvKvDjA"
+
 
 
     def loadTheme(self):

@@ -63,3 +63,11 @@ Home Widget SyleSheet:
 QPushButton:hover{background-color:#62BECB;color:white;}
 QPushButton:pressed{background-color:#0E4E5A;color:white;}
 """
+
+Merch Credentials:
+"""
+Item List:
+Rocktaves-Black-530,OasisT-Grey-280,SUSweat-Grey-530
+Spreadsheet ID:
+1GLSibEIp9w82ZwGsuRZoPCBiLWdfQjgS-_GfLvKvDjA
+"""

@@ -1,7 +1,9 @@
 from PyQt4 import QtGui, QtCore
-import sys, os, re, json
-import chorePlay, niggerFiles, centralWidgetMerch, leftWidget, displayWidget
+import sys, os, re, json, socket
+import chorePlay, niggerFiles, centralWidgetMerch, leftWidget, displayWidget, merchService
 from operator import itemgetter
+
+REMOTE_SERVER = 'www.google.com'
 
 class Entry:
     pass
@@ -37,6 +39,38 @@ class merchWidget(QtGui.QWidget):
         self.setLayout(widgetLayout)
 
         self.centralWidget.doneButton.clicked.connect(self.doneButtonHandler)
+        self.centralWidget.syncButton.clicked.connect(self.syncButtonHandler)
+
+    def syncButtonHandler(self):
+        if not self.connectedOnline():
+            msg = QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Critical)
+            msg.setText("Not connected to internet. Connect and Try again!")
+            msg.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg.buttonClicked.connect(self.closeDialog)
+            msg.exec_()
+            return
+        res = merchService.syncDB()
+        if res == 0:
+            msg = QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Information)
+            msg.setText("Sync succesful! You can close the software now.")
+            msg.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg.buttonClicked.connect(self.closeDialog)
+            msg.exec_()
+            self.deleteDBFile()
+
+    def connectedOnline(self):
+        try:
+            host = socket.gethostbyname(REMOTE_SERVER)
+            s = socket.create_connection((host, 80), 2)
+            return True
+        except:
+            pass
+        return False
+
+    def deleteDBFile(self):
+        os.remove('data-entries.txt')
 
     def doneButtonHandler(self):
         result = self.updateEntries()
@@ -59,9 +93,14 @@ class merchWidget(QtGui.QWidget):
             pass
 
     def updateEntries(self):
-        idNum = self.centralWidget.idField.text()
-        if not self.database.idValid(idNum):
-            return 1
+        isOutsti = self.centralWidget.isOutstiField.isChecked()
+
+        if isOutsti:
+            idNum = "Outsti"
+        else:
+            idNum = self.centralWidget.idField.text()
+            if not self.database.idValid(idNum):
+                return 1
 
         tempDict = {
             "ID": idNum,
