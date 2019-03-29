@@ -256,6 +256,7 @@ def arrange_items(already_arranged, new_entries):
 		return delimiterOutside.join(already_arranged), total_cost
 
 def syncDB():
+	print('Hello Sync')
 	try:
 		credentials= authorize_credentials()
 		credentials= file.Storage('credentials.storage').get()
