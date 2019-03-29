@@ -92,6 +92,9 @@ class merchWidget(QtGui.QWidget):
             msg.exec_()
             pass
 
+    def makeIdCaps(self, ID):
+        return ID.upper()
+
     def updateEntries(self):
         isOutsti = self.centralWidget.isOutstiField.isChecked()
 
@@ -99,6 +102,7 @@ class merchWidget(QtGui.QWidget):
             idNum = "Outsti"
         else:
             idNum = self.centralWidget.idField.text()
+            idNum = self.makeIdCaps(idNum)
             if not self.database.idValid(idNum):
                 return 1
 
