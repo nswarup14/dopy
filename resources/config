@@ -66,8 +66,12 @@ QPushButton:pressed{background-color:#0E4E5A;color:white;}
 
 Merch Credentials:
 """
-Item List:
+Clothes List:
 Rocktaves-Black-600,OasisT-Black-330,SUSweat-Green-600,PoloT-Red-300,PoloT-Blue-300,OldRocktaves-Any-500,OldOasis2017T-Grey-250,OldOasis2017T-Red-250
+
+Items List:
+2016-Orange-70,2017-Black-70
+
 Spreadsheet ID:
 1w_jlZSACuV22xJ8gXFHStHf83W6V1d7GNMkHhE8dgtg
 """

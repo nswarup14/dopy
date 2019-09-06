@@ -28,15 +28,12 @@ class merchWidget(QtGui.QWidget):
         self.centralWidget = centralWidgetMerch.centralWidget(self)
 
         widgetLayout = QtGui.QHBoxLayout()
-
         widgetLayout.addWidget(self.centralWidget)
 
         vbox = QtGui.QVBoxLayout()
-        vbox.addWidget(self.centralWidget)
-        widgetLayout.addLayout(vbox)
-        widgetLayout.setAlignment(QtCore.Qt.AlignCenter)
+        vbox.addLayout(widgetLayout)
 
-        self.setLayout(widgetLayout)
+        self.setLayout(vbox)
 
         self.centralWidget.doneButton.clicked.connect(self.doneButtonHandler)
         self.centralWidget.syncButton.clicked.connect(self.syncButtonHandler)
@@ -108,38 +105,19 @@ class merchWidget(QtGui.QWidget):
 
         tempDict = {
             "ID": idNum,
-            idNum: []
+            "Clothes": [],
+            "Rest": []
         }
-
-        if self.itemOneExists():
-            item = self.centralWidget.itemField1.currentText()
-            size = self.centralWidget.sizeField1.currentText()
-            fullItem = self.appendSizeToItem(item, size)
-            tempDict[idNum].append(fullItem)
-
-        if self.itemTwoExists():
-            item = self.centralWidget.itemField2.currentText()
-            size = self.centralWidget.sizeField2.currentText()
-            fullItem = self.appendSizeToItem(item, size)
-            tempDict[idNum].append(fullItem)
-
-        if self.itemThreeExists():
-            item = self.centralWidget.itemField3.currentText()
-            size = self.centralWidget.sizeField3.currentText()
-            fullItem = self.appendSizeToItem(item, size)
-            tempDict[idNum].append(fullItem)
-
-        if self.itemFourExists():
-            item = self.centralWidget.itemField4.currentText()
-            size = self.centralWidget.sizeField4.currentText()
-            fullItem = self.appendSizeToItem(item, size)
-            tempDict[idNum].append(fullItem)
-
-        if self.itemFiveExists():
-            item = self.centralWidget.itemField5.currentText()
-            size = self.centralWidget.sizeField5.currentText()
-            fullItem = self.appendSizeToItem(item, size)
-            tempDict[idNum].append(fullItem)
+        
+        for entry in range(0, 5):
+            itemName, itemSize = self.retrieveClothesItem(entry)
+            if itemName and itemSize:
+                fullItem = self.appendSizeToItem(itemName, itemSize)    
+                tempDict["Clothes"].append(fullItem)
+            itemName, itemQuantity = self.retrieveRestItem(entry)
+            if itemName and itemQuantity:
+                fullItem = self.appendQuantityToItem(itemName, itemSize)    
+                tempDict["Rest"].append(fullItem)          
         self.appendToFile(tempDict)
         return 0
 
@@ -151,52 +129,30 @@ class merchWidget(QtGui.QWidget):
     def closeDialog(self):
         return
 
-    def itemOneExists(self):
-        itemOne = self.centralWidget.itemField1.currentText()
-        sizeOne = self.centralWidget.sizeField1.currentText()
+    def retrieveClothesItem(self, entry):
+        try:
+            itemName = self.centralWidget.clothesNameFields[entry].currentText()
+            itemSize = self.centralWidget.clothesSizeFields[entry].currentText()
+        except AttributeError as e:
+            itemName = None
+            itemSize = None
+        return itemName, itemSize
 
-        if itemOne and sizeOne:
-            return True
-        else:
-            return False
-
-    def itemTwoExists(self):
-        itemTwo = self.centralWidget.itemField2.currentText()
-        sizeTwo = self.centralWidget.sizeField2.currentText()
-
-        if itemTwo and sizeTwo:
-            return True
-        else:
-            return False
-
-    def itemThreeExists(self):
-        itemThree = self.centralWidget.itemField3.currentText()
-        sizeThree = self.centralWidget.sizeField3.currentText()
-
-        if itemThree and sizeThree:
-            return True
-        else:
-            return False
-
-    def itemFourExists(self):
-        itemFour = self.centralWidget.itemField4.currentText()
-        sizeFour = self.centralWidget.sizeField4.currentText()
-
-        if itemFour and sizeFour:
-            return True
-        else:
-            return False
-
-    def itemFiveExists(self):
-        itemFive = self.centralWidget.itemField5.currentText()
-        sizeFive = self.centralWidget.sizeField5.currentText()
-
-        if itemFive and sizeFive:
-            return True
-        else:
-            return False
+    def retrieveRestItem(self, entry):
+        try:
+            itemName = self.centralWidget.restNameFields[entry].currentText()
+            itemQuantity = self.centralWidget.quantityFields[entry].currentText()
+        except AttributeError as e:
+            itemName = None
+            itemQuantity = None
+        return itemName, itemQuantity
 
     def appendSizeToItem(self, item, size):
         itemSplit = item.split('-')
         itemSplit.insert(1, size)
+        return '-'.join(itemSplit)
+    
+    def appendQuantityToItem(self, item, quantity):
+        itemSplit = item.split('-')
+        itemSplit.insert(1, quantity)
         return '-'.join(itemSplit)
