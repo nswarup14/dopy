@@ -119,46 +119,30 @@ def get_sheet_data():
 
 def get_json_from(service):
 	json_data= jsonread.convert_to_json()
-	# Check this one please
 	range_name='A:C'
 	result= service.spreadsheets().values().get(spreadsheetId= _SPREADSHEETID, range= range_name ).execute()
 	result_data= result.get('values',[])
 	no_entries= len(result_data)
-	#print(result)
+
 	for each_entry in json_data:
 		result_data= np.array(result_data)
 
-		#print(result_data)
 		# How to handle empty sheets?
-
 		all_ids= result_data[:,0]
 		ID= each_entry["ID"]
 		print(ID)
 		if ID in all_ids:
-			#print(ID)
 			index=all_ids.tolist().index(ID)
-
 			items_of_ID= result_data[index,1]
 			current_cost= result_data[index,2]
-			#print(items_of_ID," ", current_cost)
-			#print(items_of_ID)
 			new_items_of_ID, new_cost= arrange_items(items_of_ID, each_entry[ID])
-			#print(new_items_of_ID)
-			#print(result_data[index,1])
 			result_data=result_data.tolist()
-			result_data[index][1]= new_items_of_ID ######## FUcking error is here
-
-			#print(result_data[index][1])
+			result_data[index][1]= new_items_of_ID
 			temp_cost= int(result_data[index][2])
-			#print(type(result_data[index,2]))
 			temp_cost+= new_cost
 			result_data[index][2]= str(temp_cost)
-			#print(result_data[index])
-
 		else:
-
 			new_entry=[]
-			#print(each_entry[ID])
 			new_items_of_ID, new_cost= arrange_items(None, each_entry[ID] )
 			new_entry=[ID, new_items_of_ID, new_cost]
 			result_data=result_data.tolist()
@@ -167,10 +151,6 @@ def get_json_from(service):
 
 	result_data=np.array(result_data)
 	result_data=result_data.tolist()
-	"""
-	for temp in range(0,len(result_data)):
-		print(result_data[temp])
-	"""
 	body={
 		"values": result_data
 	}
@@ -196,7 +176,6 @@ def arrange_items(already_arranged, new_entries):
 
 				total_cost+= int(item_split[3])
 				already_arranged.append(latest_entry)
-				#print(already_arranged)
 
 			else:
 				flag=0
@@ -208,9 +187,7 @@ def arrange_items(already_arranged, new_entries):
 						split_added_already[3]=str(split_added_already[3])
 						total_cost+=int(item_split[3])
 						already_arranged[count]=delimiterInside.join(split_added_already)
-						#print(already_arranged[count])
 						flag=1
-						#print(already_arranged)
 						break
 
 				if flag==0:
@@ -218,45 +195,34 @@ def arrange_items(already_arranged, new_entries):
 					latest_entry= delimiterInside.join(latest_entry)
 					total_cost+= int(item_split[3])
 					already_arranged.append(latest_entry)
-					#print(already_arranged)
 
-		#print(delimiterOutside.join(already_arranged)," ", total_cost)
 		return delimiterOutside.join(already_arranged), total_cost
 
 	else:
-		#print(already_arranged)
 		already_arranged= already_arranged.split(delimiterOutside)
-		#print(already_arranged)
 		total_cost=0
 		for each_entry in new_entries:
 			item_split= each_entry.split(delimiterInside)
 			flag=0
 			for count in range(0,len(already_arranged)):
-				#print(already_arranged[count])
 				split_added_already= already_arranged[count].split(delimiterInside)
-				#print(split_added_already)
 				if(item_split[0]==split_added_already[0] and item_split[1]==split_added_already[1] and split_added_already[2]== item_split[2]):
-					#print(split_added_already)
 					split_added_already[3]=int(split_added_already[3])
 					split_added_already[3]+=1
 					split_added_already[3]=str(split_added_already[3])
 					total_cost+=int(item_split[3])
 					already_arranged[count]= delimiterInside.join(split_added_already)
 					flag=1
-					#print(already_arranged)
 					break
 			if flag==0:
-				#print("Not entered")
 				latest_entry= [item_split[0],item_split[1], item_split[2], "1"]
 				latest_entry= delimiterInside.join(latest_entry)
 				total_cost+= int(item_split[3])
 				already_arranged.append(latest_entry)
-		#print(delimiterOutside.join(already_arranged))
-		#print(already_arranged)
+
 		return delimiterOutside.join(already_arranged), total_cost
 
 def syncDB():
-	print('Hello Sync')
 	try:
 		credentials= authorize_credentials()
 		credentials= file.Storage('credentials.storage').get()
