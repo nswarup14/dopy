@@ -116,8 +116,8 @@ class merchWidget(QtGui.QWidget):
                 tempDict["Clothes"].append(fullItem)
             itemName, itemQuantity = self.retrieveRestItem(entry)
             if itemName and itemQuantity:
-                fullItem = self.appendQuantityToItem(itemName, itemSize)    
-                tempDict["Rest"].append(fullItem)          
+                fullItem = self.appendQuantityToItem(itemName, itemQuantity)    
+                tempDict["Rest"].append(fullItem[:-1])          
         self.appendToFile(tempDict)
         return 0
 
@@ -141,10 +141,13 @@ class merchWidget(QtGui.QWidget):
     def retrieveRestItem(self, entry):
         try:
             itemName = self.centralWidget.restNameFields[entry].currentText()
-            itemQuantity = self.centralWidget.quantityFields[entry].currentText()
+            itemQuantity = self.centralWidget.quantityFields[entry].text()
         except AttributeError as e:
             itemName = None
             itemQuantity = None
+        if itemQuantity == '':
+            itemName = None
+            itemQuantity = None     
         return itemName, itemQuantity
 
     def appendSizeToItem(self, item, size):
