@@ -11,50 +11,49 @@ import numpy as np
 import jsonread
 import config
 
-CLIENT_SECRET= jsonread.get_path()+'/creds/client_secret.json'
-SCOPE= 'https://www.googleapis.com/auth/spreadsheets'
+CLIENT_SECRET = jsonread.get_path()+'/creds/client_secret.json'
+SCOPE = 'https://www.googleapis.com/auth/spreadsheets'
 
 # Overwrite None values later
 ssId = config.configurator().spreadSheetId
 if '\n' in ssId:
 	ssId = ssId[:-1]
-_SPREADSHEETID= ssId
+_SPREADSHEETID = ssId
 
 # Start OAuth to retrive credentials
 
 def refresh_access_token():
 	with open("credentials.storage","r") as read_file:
-		read_content= read_file.read()
-		json_content= json.loads(read_content)
+		read_content = read_file.read()
+		json_content = json.loads(read_content)
 
-		client_id= json_content["client_id"]
-		client_secret= json_content["client_secret"]
-		refresh_token= json_content["refresh_token"]
+		client_id = json_content["client_id"]
+		client_secret = json_content["client_secret"]
+		refresh_token = json_content["refresh_token"]
 
-		request= Request(json_content["token_uri"],
-			data= parse.urlencode({
+		request = Request(json_content["token_uri"],
+			data = parse.urlencode({
 				"grant_type": "refresh_token",
 				"client_id": client_id,
 				"client_secret": client_secret,
 				"refresh_token": refresh_token
 
 				}).encode("utf-8"),
-			headers= {
+			headers = {
 			"Content-type": "application/x-www-form-urlencoded",
 			"Accept": "application/json"
 			})
-		temp= urlopen(request).read()
-		temp_content= temp.decode("utf-8")
-		response= json.loads(temp_content)
+		temp = urlopen(request).read()
+		temp_content = temp.decode("utf-8")
+		response = json.loads(temp_content)
 		return response["access_token"]
 
 def get_credentials(access_token):
 	user_agent = None
 	revoke_uri = "https://oauth2.googleapis.com/revoke"
 
-	credentials= client.AccessTokenCredentials(access_token= access_token, user_agent=user_agent, revoke_uri = revoke_uri)
+	credentials = client.AccessTokenCredentials(access_token= access_token, user_agent=user_agent, revoke_uri = revoke_uri)
 	return credentials
-
 
 def send_data(service):
 	""" Sample emthod to write data to a spreadsheet"""
@@ -82,7 +81,6 @@ def authorize_credentials():
 		http = httplib2.Http()
 		credentials = tools.run_flow(flow, file.Storage('credentials.storage'), http=http)
 	return credentials
-
 
 def get_service(credentials):
 	http = httplib2.Http()
