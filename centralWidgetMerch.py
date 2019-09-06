@@ -31,7 +31,7 @@ class quantityBox(QtGui.QLineEdit):
     def __init__(self, parent=None):
         QtGui.QLineEdit.__init__(self)
         self.parent = parent
-        self.setText('0')
+        self.setText('')
         self.setGeometry(200, 100, 400, 300)
 
 class sizeComboBox(QtGui.QComboBox):
@@ -180,4 +180,4 @@ class centralWidget(QtGui.QWidget):
             self.clothesNameFields[entry].setEditText('')
             self.clothesSizeFields[entry].setEditText('')
             self.restNameFields[entry].setEditText('')
-            self.quantityFields[entry].setText('0')
+            self.quantityFields[entry].setText('')
