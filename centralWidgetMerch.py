@@ -3,13 +3,15 @@ import sys, os
 
 class itemComboBox(QtGui.QComboBox):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, clothes=False):
 
         QtGui.QComboBox.__init__(self)
         self.parent = parent
         self.model = QtGui.QStringListModel()
-        self.itemList = self.parent.parent.parent.configurator.merchItemList
-
+        if clothes:
+            self.itemList = self.parent.parent.parent.configurator.clothesItemList
+        else:
+            self.itemList = self.parent.parent.parent.configurator.restItemList
         self.model.setStringList(self.itemList)
         self.addItems(self.itemList)
 
@@ -22,6 +24,14 @@ class itemComboBox(QtGui.QComboBox):
         self.setCompleter(self.completer)
         self.setEditText('')
 
+        self.setGeometry(200, 100, 400, 300)
+
+class quantityBox(QtGui.QLineEdit):
+
+    def __init__(self, parent=None):
+        QtGui.QLineEdit.__init__(self)
+        self.parent = parent
+        self.setText('0')
         self.setGeometry(200, 100, 400, 300)
 
 class sizeComboBox(QtGui.QComboBox):
@@ -102,25 +112,16 @@ class centralWidget(QtGui.QWidget):
 
         self.isOutstiField = QtGui.QCheckBox("Outsti (Hover over text to view the checkbox)")
 
-        self.itemLabel1 = QtGui.QLabel(r'Item')
-        self.itemField1 = itemComboBox(self)
-        self.sizeField1 = sizeComboBox(self)
+        self.clothesNameFields = []
+        self.clothesSizeFields = []
+        self.restNameFields = []
+        self.quantityFields = []
 
-        self.itemLabel2 = QtGui.QLabel(r'Item')
-        self.itemField2 = itemComboBox(self)
-        self.sizeField2 = sizeComboBox(self)
-
-        self.itemLabel3 = QtGui.QLabel(r'Item')
-        self.itemField3 = itemComboBox(self)
-        self.sizeField3 = sizeComboBox(self)
-
-        self.itemLabel4 = QtGui.QLabel(r'Item')
-        self.itemField4 = itemComboBox(self)
-        self.sizeField4 = sizeComboBox(self)
-
-        self.itemLabel5 = QtGui.QLabel(r'Item')
-        self.itemField5 = itemComboBox(self)
-        self.sizeField5 = sizeComboBox(self)
+        for entry in range(0, 5):        
+            self.clothesNameFields.append(itemComboBox(self, True))
+            self.clothesSizeFields.append(sizeComboBox(self))
+            self.restNameFields.append(itemComboBox(self, False))
+            self.quantityFields.append(quantityBox(self))
 
         self.doneButton = QtGui.QPushButton("Done")
 
@@ -135,31 +136,6 @@ class centralWidget(QtGui.QWidget):
         hboxOutsti = QtGui.QHBoxLayout()
         hboxOutsti.addWidget(self.isOutstiField)
 
-        hbox1 = QtGui.QHBoxLayout()
-        hbox1.addWidget(self.itemLabel1)
-        hbox1.addWidget(self.itemField1)
-        hbox1.addWidget(self.sizeField1)
-
-        hbox2 = QtGui.QHBoxLayout()
-        hbox2.addWidget(self.itemLabel2)
-        hbox2.addWidget(self.itemField2)
-        hbox2.addWidget(self.sizeField2)
-
-        hbox3 = QtGui.QHBoxLayout()
-        hbox3.addWidget(self.itemLabel3)
-        hbox3.addWidget(self.itemField3)
-        hbox3.addWidget(self.sizeField3)
-
-        hbox4 = QtGui.QHBoxLayout()
-        hbox4.addWidget(self.itemLabel4)
-        hbox4.addWidget(self.itemField4)
-        hbox4.addWidget(self.sizeField4)
-
-        hbox5 = QtGui.QHBoxLayout()
-        hbox5.addWidget(self.itemLabel5)
-        hbox5.addWidget(self.itemField5)
-        hbox5.addWidget(self.sizeField5)
-
         hboxDone = QtGui.QHBoxLayout()
         hboxDone.addStretch(True)
         hboxDone.addWidget(self.doneButton)
@@ -169,26 +145,39 @@ class centralWidget(QtGui.QWidget):
         widgetLayout.addLayout(hboxId)
         widgetLayout.addLayout(hboxOutsti)
 
-        widgetLayout.addLayout(hbox1)
-        widgetLayout.addLayout(hbox2)
-        widgetLayout.addLayout(hbox3)
-        widgetLayout.addLayout(hbox4)
-        widgetLayout.addLayout(hbox5)
+        clothesVbox = QtGui.QVBoxLayout()
+        restVbox = QtGui.QVBoxLayout()
 
+        for entry in range(0, 5):
+            hbox = QtGui.QHBoxLayout()
+            hbox.addStretch(True)
+            label = QtGui.QLabel('Item-'+str(entry + 1))
+            hbox.addWidget(label)
+            hbox.addWidget(self.clothesNameFields[entry])
+            hbox.addWidget(self.clothesSizeFields[entry])
+            clothesVbox.addLayout(hbox)
+
+            hbox = QtGui.QHBoxLayout()
+            hbox.addStretch(True)
+            label = QtGui.QLabel('Item-'+str(entry + 1))
+            hbox.addWidget(label)
+            hbox.addWidget(self.restNameFields[entry])
+            hbox.addWidget(self.quantityFields[entry])
+            restVbox.addLayout(hbox)
+
+        itemsHbox = QtGui.QHBoxLayout()
+        itemsHbox.addLayout(clothesVbox)
+        itemsHbox.addLayout(restVbox)
+
+        widgetLayout.addLayout(itemsHbox)
         widgetLayout.addLayout(hboxDone)
-
         self.setLayout(widgetLayout)
 
     def refresh(self):
         self.idField.setText("")
         self.isOutstiField.setChecked(False)
-        self.itemField1.setEditText("")
-        self.sizeField1.setEditText("")
-        self.itemField2.setEditText("")
-        self.sizeField2.setEditText("")
-        self.itemField3.setEditText("")
-        self.sizeField3.setEditText("")
-        self.itemField4.setEditText("")
-        self.sizeField4.setEditText("")
-        self.itemField5.setEditText("")
-        self.sizeField5.setEditText("")
+        for entry in range(0, 5):
+            self.clothesNameFields[entry].setEditText('')
+            self.clothesSizeFields[entry].setEditText('')
+            self.restNameFields[entry].setEditText('')
+            self.quantityFields[entry].setText('0')
