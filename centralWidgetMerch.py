@@ -24,7 +24,7 @@ class itemComboBox(QtGui.QComboBox):
         self.setCompleter(self.completer)
         self.setEditText('')
 
-        self.setGeometry(200, 100, 400, 300)
+        # self.setGeometry(200, 100, 400, 300)
 
 class quantityBox(QtGui.QLineEdit):
 
@@ -32,7 +32,7 @@ class quantityBox(QtGui.QLineEdit):
         QtGui.QLineEdit.__init__(self)
         self.parent = parent
         self.setText('')
-        self.setGeometry(200, 100, 400, 300)
+        # self.setGeometry(200, 100, 400, 300)
 
 class sizeComboBox(QtGui.QComboBox):
 
@@ -55,7 +55,7 @@ class sizeComboBox(QtGui.QComboBox):
         self.setCompleter(self.completer)
         self.setEditText('')
 
-        self.setGeometry(200, 100, 400, 300)
+        # self.setGeometry(200, 100, 400, 300)
 
 class CustomQCompleter(QtGui.QCompleter):
     def __init__(self, parent=None):
@@ -148,9 +148,13 @@ class centralWidget(QtGui.QWidget):
         clothesVbox = QtGui.QVBoxLayout()
         restVbox = QtGui.QVBoxLayout()
 
+        clothesLabel = QtGui.QLabel('Clothes based Items')
+        restLabel = QtGui.QLabel('Non-Clothes based Items')
+        clothesVbox.addWidget(clothesLabel)
+        restVbox.addWidget(restLabel)
+
         for entry in range(0, 5):
             hbox = QtGui.QHBoxLayout()
-            hbox.addStretch(True)
             label = QtGui.QLabel('Item-'+str(entry + 1))
             hbox.addWidget(label)
             hbox.addWidget(self.clothesNameFields[entry])
@@ -158,7 +162,6 @@ class centralWidget(QtGui.QWidget):
             clothesVbox.addLayout(hbox)
 
             hbox = QtGui.QHBoxLayout()
-            hbox.addStretch(True)
             label = QtGui.QLabel('Item-'+str(entry + 1))
             hbox.addWidget(label)
             hbox.addWidget(self.restNameFields[entry])
