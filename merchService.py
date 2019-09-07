@@ -88,110 +88,131 @@ def get_service(credentials):
 	service = discovery.build("sheets","v4",http)
 	return service
 
-def get_sheet_data():
-	spreadsheetId = None
-	sheetId = None
-	path = jsonread.get_path()
-	with open(path+"/sheet-id.json","r") as read_file:
-		content = read_file.read()
-		json_content = json.loads(content)
-
-		spreadsheetId = json_content['spreadsheetId']
-		sheetId = json_content['sheetId']
-	return spreadsheetId, sheetId
-
 def get_json_from(service):
 	json_data = jsonread.convert_to_json()
 	range_name ='A:C'
 	result = service.spreadsheets().values().get(spreadsheetId= _SPREADSHEETID, range= range_name).execute()
 	result_data = result.get('values',[])
-	no_entries = len(result_data)
 
 	for each_entry in json_data:
 		result_data = np.array(result_data)
-
 		# How to handle empty sheets?
 		all_ids = result_data[:,0]
 		ID = each_entry["ID"]
 		if ID in all_ids:
 			index = all_ids.tolist().index(ID)
 			items_of_ID = result_data[index,1]
-			new_items_of_ID, new_cost = arrange_items(items_of_ID, each_entry[ID])
+			new_items_of_ID, new_cost = arrange_items(items_of_ID, each_entry["Clothes"], each_entry["Rest"])
 			result_data = result_data.tolist()
 			result_data[index][1] = new_items_of_ID
 			temp_cost = int(result_data[index][2])
 			temp_cost += new_cost
 			result_data[index][2] = str(temp_cost)
 		else:
-			new_entry = []
-			new_items_of_ID, new_cost = arrange_items(None, each_entry[ID] )
+			new_items_of_ID, new_cost = arrange_items(None, each_entry["Clothes"], each_entry["Rest"])
 			new_entry = [ID, new_items_of_ID, new_cost]
 			result_data = result_data.tolist()
 			result_data.append(new_entry)
-			no_entries += 1
 
 	result_data = np.array(result_data).tolist()
 	body = {
 		"values": result_data
 	}
+	print('result data ', result_data)
 	result = service.spreadsheets().values().update(spreadsheetId= _SPREADSHEETID, body=body, range= 'A:C', valueInputOption ="RAW").execute()
 
-def arrange_items(already_arranged, new_entries):
+def arrange_items(already_arranged, new_clothes, new_rest):
 	delimiterOutside = '|'
 	delimiterInside = '-'
-
+	new_clothes.extend(new_rest)
+	new_entries = new_clothes # Contains both
 	if already_arranged is None:
 		total_cost = 0
 		already_arranged = []
 		for each_entry in new_entries:
-			item_split = each_entry.split(delimiterInside)
-			if len(already_arranged) == 0:
-				latest_entry = [item_split[0],item_split[1], item_split[2], "1"]
-				latest_entry = delimiterInside.join(latest_entry)
-				total_cost += int(item_split[3])
-				already_arranged.append(latest_entry)
-			else:
-				flag = 0
-				for count in range(0,len(already_arranged)):
-					split_added_already = already_arranged[count].split(delimiterInside)
-					if(item_split[0] == split_added_already[0] and item_split[1] == split_added_already[1] and split_added_already[2]== item_split[2]):
-						split_added_already[3] = int(split_added_already[3])
-						split_added_already[3] += 1
-						split_added_already[3] = str(split_added_already[3])
-						total_cost += int(item_split[3])
-						already_arranged[count] = delimiterInside.join(split_added_already)
-						flag = 1
-						break
-				if flag == 0:
-					latest_entry = [item_split[0],item_split[1], item_split[2], "1"]
-					latest_entry = delimiterInside.join(latest_entry)
-					total_cost += int(item_split[3])
-					already_arranged.append(latest_entry)
-		return delimiterOutside.join(already_arranged), total_cost
-
+			new_item = each_entry.split(delimiterInside)
+			if len(new_item) == 3:
+				# Name, Quantity, Price
+				# Rest Item
+				if len(already_arranged) == 0:
+					new_rest_entry = delimiterInside.join([new_item[0], new_item[1]])
+					# Name, Quantity
+					total_cost = total_cost + (int(new_item[2]) * int(new_item[1]))
+					already_arranged.append(new_rest_entry)
+				else:
+					restFlag = 0
+					for count in range(0, len(already_arranged)):
+						split_added_already = already_arranged[count].split(delimiterInside)
+						if len(split_added_already) == 2:
+							if(new_item[0] == split_added_already[0]):
+								split_added_already[1] = str(int(split_added_already[1]) + int(new_item[1]))
+								total_cost = total_cost + int(new_item[1]) * int(new_item[2])
+								already_arranged[count] = delimiterInside.join(split_added_already)
+								restFlag = 1
+								break
+					if restFlag == 0:
+						latest_entry = [new_item[0], new_item[1]]
+						latest_entry = delimiterInside.join(latest_entry)
+						total_cost = total_cost + (int(new_item[2]) * int(new_item[1]))
+						already_arranged.append(latest_entry)
+			elif len(new_item) == 4:
+				# Name, Size, Color, Price
+				# Clothes Item
+				if len(already_arranged) == 0:
+					new_clothes_entry = delimiterInside.join([new_item[0], new_item[1], new_item[2], '1'])
+					# Name, Size, Color, Quantity
+					total_cost = total_cost + int(new_item[3])
+					already_arranged.append(new_clothes_entry)
+				else:
+					clothesFlag = 0
+					for count in range(0, len(already_arranged)):
+						split_added_already = already_arranged[count].split(delimiterInside)
+						if len(split_added_already) == 4:
+							if(new_item[0] == split_added_already[0] and new_item[1] == split_added_already[1] and new_item[2] == split_added_already[2]):
+									split_added_already[3] = str(int(split_added_already[3]) + 1)
+									total_cost = total_cost + int(new_item[3])
+									already_arranged[count] = delimiterInside.join(split_added_already)
+									clothesFlag = 1
+									break
+					if clothesFlag == 0:
+						latest_entry = [new_item[0], new_item[1], new_item[2], "1"]
+						latest_entry = delimiterInside.join(latest_entry)
+						total_cost += int(new_item[3])
+						already_arranged.append(latest_entry)
 	else:
 		already_arranged = already_arranged.split(delimiterOutside)
 		total_cost = 0
 		for each_entry in new_entries:
-			item_split = each_entry.split(delimiterInside)
+			new_item = each_entry.split(delimiterInside)
 			flag = 0
-			for count in range(0,len(already_arranged)):
+			for count in range(0, len(already_arranged)):
 				split_added_already = already_arranged[count].split(delimiterInside)
-				if(item_split[0] == split_added_already[0] and item_split[1] == split_added_already[1] and split_added_already[2] == item_split[2]):
-					split_added_already[3] = int(split_added_already[3])
-					split_added_already[3] += 1
-					split_added_already[3] = str(split_added_already[3])
-					total_cost += int(item_split[3])
-					already_arranged[count] = delimiterInside.join(split_added_already)
-					flag = 1
-					break
+				if len(new_item) == 3 and len(split_added_already) == 2:
+					if(new_item[0] == split_added_already[0]):
+						split_added_already[1] = str(int(split_added_already[1]) + int(new_item[1]))
+						total_cost = total_cost + int(new_item[1]) * int(new_item[2])
+						already_arranged[count] = delimiterInside.join(split_added_already)
+						flag = 1
+						break
+				elif len(new_item) == len(split_added_already) == 4:
+					if(new_item[0] == split_added_already[0] and new_item[1] == split_added_already[1] and new_item[2] == split_added_already[2]):
+						split_added_already[3] = str(int(split_added_already[3]) + 1)
+						total_cost = total_cost + int(new_item[3])
+						already_arranged[count] = delimiterInside.join(split_added_already)
+						flag = 1
+						break
 			if flag == 0:
-				latest_entry = [item_split[0],item_split[1], item_split[2], "1"]
-				latest_entry = delimiterInside.join(latest_entry)
-				total_cost += int(item_split[3])
-				already_arranged.append(latest_entry)
-
-		return delimiterOutside.join(already_arranged), total_cost
+				if len(new_item) == 4:
+					latest_entry = [new_item[0], new_item[1], new_item[2], '1']
+					latest_entry = delimiterInside.join(latest_entry)
+					total_cost += int(new_item[3])
+					already_arranged.append(latest_entry)
+				elif len(new_item) == 2:
+					latest_entry = [new_item[0], new_item[1]]
+					latest_entry = delimiterInside.join(latest_entry)
+					total_cost = total_cost + (int(new_item[2]) * int(new_item[1]))
+					already_arranged.append(latest_entry)
+	return delimiterOutside.join(already_arranged), total_cost
 
 def syncDB():
 	try:

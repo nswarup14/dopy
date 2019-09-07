@@ -117,7 +117,7 @@ class merchWidget(QtGui.QWidget):
             itemName, itemQuantity = self.retrieveRestItem(entry)
             if itemName and itemQuantity:
                 fullItem = self.appendQuantityToItem(itemName, itemQuantity)    
-                tempDict["Rest"].append(fullItem[:-1])          
+                tempDict["Rest"].append(fullItem)          
         self.appendToFile(tempDict)
         return 0
 

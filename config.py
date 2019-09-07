@@ -188,12 +188,12 @@ QComboBox{background-color:#3F4038;color:white;border-radius:2px;padding:2px}
             # Clothes Items
             index = self.lines.index("Clothes List:\n")
             stringList = self.lines[index+1]
-            self.clothesItemList = stringList.split(',')
+            self.clothesItemList = stringList.split('\n')[0].split(',')
 
             # Rest of the Items
             index = self.lines.index("Items List:\n")
             stringList = self.lines[index+1]
-            self.restItemList = stringList.split(',')
+            self.restItemList = stringList.split('\n')[0].split(',')
         except Exception as e:
             print("Error configuring item list: ", str(e))
             self.clothesItemList = ["Rocktaves-Black-530", "OasisT-Grey-280", "SUSweat-Grey-530"]
