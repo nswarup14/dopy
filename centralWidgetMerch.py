@@ -159,6 +159,7 @@ class centralWidget(QtGui.QWidget):
             hbox.addWidget(label)
             hbox.addWidget(self.clothesNameFields[entry])
             hbox.addWidget(self.clothesSizeFields[entry])
+            hbox.addStretch(True)
             clothesVbox.addLayout(hbox)
 
             hbox = QtGui.QHBoxLayout()
