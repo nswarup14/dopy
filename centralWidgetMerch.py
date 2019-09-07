@@ -159,7 +159,6 @@ class centralWidget(QtGui.QWidget):
             hbox.addWidget(label)
             hbox.addWidget(self.clothesNameFields[entry])
             hbox.addWidget(self.clothesSizeFields[entry])
-            hbox.addStretch(True)
             clothesVbox.addLayout(hbox)
 
             hbox = QtGui.QHBoxLayout()
@@ -170,7 +169,9 @@ class centralWidget(QtGui.QWidget):
             restVbox.addLayout(hbox)
 
         itemsHbox = QtGui.QHBoxLayout()
+        itemsHbox.setSpacing(12)
         itemsHbox.addLayout(clothesVbox)
+        itemsHbox.addStretch(True)
         itemsHbox.addLayout(restVbox)
 
         widgetLayout.addLayout(itemsHbox)
