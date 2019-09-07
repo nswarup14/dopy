@@ -79,6 +79,21 @@ class merchWidget(QtGui.QWidget):
             msg.buttonClicked.connect(self.closeDialog)
             msg.exec_()
             self.centralWidget.refresh()
+        elif result == 2:
+            msg = QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Warning)
+            msg.setText("Entries are either empty or incomplete! Please be careful next time")
+            msg.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg.buttonClicked.connect(self.closeDialog)
+            msg.exec_()
+            # self.centralWidget.refresh()
+        elif result == 3:
+            msg = QtGui.QMessageBox()
+            msg.setIcon(QtGui.QMessageBox.Critical)
+            msg.setText("Enter a number as quantity, not any other characters or letters")
+            msg.setStandardButtons(QtGui.QMessageBox.Ok)
+            msg.buttonClicked.connect(self.closeDialog)
+            msg.exec_()                
         else:
             # Show error popup.
             msg = QtGui.QMessageBox()
@@ -108,16 +123,21 @@ class merchWidget(QtGui.QWidget):
             "Clothes": [],
             "Rest": []
         }
-        
+
         for entry in range(0, 5):
             itemName, itemSize = self.retrieveClothesItem(entry)
             if itemName and itemSize:
                 fullItem = self.appendSizeToItem(itemName, itemSize)    
                 tempDict["Clothes"].append(fullItem)
-            itemName, itemQuantity = self.retrieveRestItem(entry)
+            try:
+                itemName, itemQuantity = self.retrieveRestItem(entry)
+            except ValueError:
+                return 3
             if itemName and itemQuantity:
                 fullItem = self.appendQuantityToItem(itemName, itemQuantity)    
-                tempDict["Rest"].append(fullItem)          
+                tempDict["Rest"].append(fullItem)
+        if len(tempDict["Clothes"]) == 0 and len(tempDict["Rest"]) == 0:
+            return 2
         self.appendToFile(tempDict)
         return 0
 
@@ -147,7 +167,9 @@ class merchWidget(QtGui.QWidget):
             itemQuantity = None
         if itemQuantity == '':
             itemName = None
-            itemQuantity = None     
+            itemQuantity = None
+        if itemQuantity:
+            val = int(itemQuantity)
         return itemName, itemQuantity
 
     def appendSizeToItem(self, item, size):
