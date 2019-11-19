@@ -4,3 +4,5 @@ __pycache__
 credentials.storage
 build\
 dist\
+config
+database.db
